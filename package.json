@@ -1,7 +1,15 @@
 {
-  "name": "xcrawl-cli",
+  "name": "@xcrawl/cli",
   "version": "0.2.0",
   "description": "XCrawl command line interface",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
   "bin": {
     "xcrawl": "dist/index.js"
   },

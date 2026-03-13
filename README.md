@@ -7,13 +7,13 @@ XCrawl CLI is a Node.js command-line tool for scraping, searching, mapping, and 
 ### Run with npx (no global install)
 
 ```bash
-npx -y xcrawl-cli@latest doctor
+npx -y @xcrawl/cli@latest doctor
 ```
 
 ### Install globally with npm
 
 ```bash
-npm install -g xcrawl-cli
+npm install -g @xcrawl/cli
 xcrawl --help
 ```
 

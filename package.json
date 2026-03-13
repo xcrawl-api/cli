@@ -1,0 +1,39 @@
+{
+  "name": "xcrawl-cli",
+  "version": "0.2.0",
+  "description": "XCrawl command line interface",
+  "bin": {
+    "xcrawl": "dist/index.js"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit",
+    "smoke": "node scripts/smoke-real-api.mjs",
+    "prepublishOnly": "npm run build && npm run test && npm run lint"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "xcrawl",
+    "cli",
+    "scrape",
+    "search"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^14.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.2",
+    "execa": "^9.6.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}

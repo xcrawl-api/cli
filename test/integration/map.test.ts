@@ -23,6 +23,9 @@ describe('map command', () => {
     expect(result.code).toBe(0);
     expect(result.stdout).toContain('Source URL: https://example.com');
     expect(result.stdout).toContain('Total links: 2');
+    expect(result.stdout).toContain('1. https://example.com/a');
+    expect(result.stdout).toContain('2. https://example.com/b');
+    expect(result.stdout).not.toContain('Untitled');
   });
 
   it('returns actionable error when api key is missing', async () => {

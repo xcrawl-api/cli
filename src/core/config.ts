@@ -54,6 +54,37 @@ export async function saveLocalConfig(nextConfig: XCrawlConfig, homeDir?: string
   }
 }
 
+export interface ClearLocalApiKeyResult {
+  configPath: string;
+  cleared: boolean;
+}
+
+export async function clearLocalApiKey(homeDir?: string): Promise<ClearLocalApiKeyResult> {
+  const configPath = getConfigPath(homeDir);
+  const existing = await readLocalConfig(homeDir);
+
+  if (!Object.prototype.hasOwnProperty.call(existing, 'apiKey')) {
+    return {
+      configPath,
+      cleared: false
+    };
+  }
+
+  const configDir = path.dirname(configPath);
+  const { apiKey: _apiKey, ...withoutApiKey } = existing;
+
+  try {
+    await mkdir(configDir, { recursive: true });
+    await writeFile(configPath, `${JSON.stringify(withoutApiKey, null, 2)}\n`, 'utf8');
+    return {
+      configPath,
+      cleared: true
+    };
+  } catch (error) {
+    throw new ConfigError(`Failed to write config file: ${configPath}`, 'Please check directory permissions.', error);
+  }
+}
+
 export interface ResolveRuntimeConfigInput {
   flags?: XCrawlConfig;
   env?: XCrawlConfig;

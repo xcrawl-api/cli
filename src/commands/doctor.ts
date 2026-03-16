@@ -1,6 +1,6 @@
 import type { Command } from 'commander';
 
-import { fetchWhoAmI } from '../api/whoami';
+import { fetchStatus } from '../api/status';
 import { getConfigPath, saveLocalConfig } from '../core/config';
 import { renderOutput } from '../core/output';
 import { formatDoctorReport, type DoctorReport } from '../formatters/text';
@@ -82,11 +82,11 @@ export function registerDoctorCommand(program: Command, context: CliContext): vo
       if (runtime.apiKey) {
         try {
           const client = context.createApiClient(runtime);
-          await fetchWhoAmI(client);
+          await fetchStatus(client);
           report.checks.push({
             name: 'api_connectivity',
             ok: true,
-            detail: 'whoami check passed'
+            detail: 'status check passed'
           });
         } catch (error) {
           if (isAccountEndpointUnavailable(error, runtime.apiBaseUrl)) {
@@ -107,7 +107,7 @@ export function registerDoctorCommand(program: Command, context: CliContext): vo
             return;
           }
 
-          const message = error instanceof Error ? error.message : 'whoami check failed';
+          const message = error instanceof Error ? error.message : 'status check failed';
           report.checks.push({
             name: 'api_connectivity',
             ok: false,

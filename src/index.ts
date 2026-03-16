@@ -7,24 +7,24 @@ import { Command, CommanderError } from 'commander';
 import { ApiClient } from './api/client';
 import { registerConfigCommand } from './commands/config';
 import { registerCrawlCommand } from './commands/crawl';
-import { registerCreditsCommand } from './commands/credits';
 import { registerDoctorCommand } from './commands/doctor';
 import { registerInitCommand } from './commands/init';
 import { registerLoginCommand } from './commands/login';
+import { registerLogoutCommand } from './commands/logout';
 import { registerMapCommand } from './commands/map';
 import { registerScrapeCommand } from './commands/scrape';
 import { registerSearchCommand } from './commands/search';
-import { registerWhoamiCommand } from './commands/whoami';
+import { registerStatusCommand } from './commands/status';
 import { formatErrorForUser } from './core/errors';
 import type { CliContext } from './types/cli';
 import type { RuntimeConfig } from './types/config';
 
 const KNOWN_COMMANDS = new Set([
   'login',
-  'whoami',
+  'logout',
+  'status',
   'scrape',
   'search',
-  'credits',
   'doctor',
   'map',
   'crawl',
@@ -32,6 +32,10 @@ const KNOWN_COMMANDS = new Set([
   'init',
   'help'
 ]);
+
+function isLikelyHttpUrl(value: string): boolean {
+  return value.startsWith('http://') || value.startsWith('https://');
+}
 
 function normalizeArgv(argv: string[]): string[] {
   if (argv.length === 0) {
@@ -47,6 +51,10 @@ function normalizeArgv(argv: string[]): string[] {
 
   const [first] = argv;
   if (first.startsWith('-') || KNOWN_COMMANDS.has(first)) {
+    return argv;
+  }
+
+  if (!isLikelyHttpUrl(first)) {
     return argv;
   }
 
@@ -79,10 +87,10 @@ export function createProgram(context: CliContext): Command {
   program.name('xcrawl').description('XCrawl CLI').version(context.version);
 
   registerLoginCommand(program, context);
-  registerWhoamiCommand(program, context);
+  registerLogoutCommand(program, context);
+  registerStatusCommand(program, context);
   registerScrapeCommand(program, context);
   registerSearchCommand(program, context);
-  registerCreditsCommand(program, context);
   registerDoctorCommand(program, context);
 
   registerMapCommand(program, context);

@@ -12,11 +12,38 @@ export interface ApiTransport {
   post<T>(path: string, options?: ApiRequestOptions): Promise<T>;
 }
 
-export interface WhoAmIResponse {
-  id: string;
+export interface StatusResponse {
+  username: string;
   email: string;
-  name?: string;
-  plan?: string;
+  createdAt?: string;
+  creditLevel: number;
+  totalCredits: number;
+  remainCredits: number;
+  consumedCredits: number;
+  todayCredits: number;
+  nextResetAt?: string | null;
+  expiredAt?: string | null;
+  packageTitle?: string | null;
+}
+
+export interface RawStatusData {
+  username?: string;
+  email?: string;
+  created_at?: string;
+  credit_level?: number;
+  total_credits?: number;
+  remain_credits?: number;
+  consumed_credits?: number;
+  today_credits?: number;
+  next_reset_at?: string | null;
+  expired_at?: string | null;
+  package_title?: string | null;
+}
+
+export interface RawStatusEnvelope {
+  code?: number;
+  msg?: string;
+  data?: RawStatusData;
 }
 
 export interface ScrapeRequest {
@@ -92,13 +119,6 @@ export interface RawSearchResponse {
   started_at?: string;
   ended_at?: string;
   total_credits_used?: number;
-}
-
-export interface CreditsResponse {
-  remaining: number;
-  used: number;
-  total: number;
-  resetAt?: string;
 }
 
 export interface MapRequest {

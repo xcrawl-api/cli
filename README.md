@@ -25,6 +25,9 @@ Use either login command or environment variable.
 # Save API key locally
 xcrawl login --api-key <your_api_key>
 
+# Clear local API key
+xcrawl logout
+
 # Or use env var
 export XCRAWL_API_KEY=<your_api_key>
 ```
@@ -37,6 +40,9 @@ xcrawl scrape https://example.com --format markdown
 
 # Search
 xcrawl search "xcrawl cli" --limit 10
+
+# Show account and credit package status
+xcrawl status
 
 # Map links in a site
 xcrawl map https://example.com --limit 10
@@ -95,8 +101,7 @@ Environment variables:
 ## Public API Notes
 
 - Default API base URL is `https://run.xcrawl.com`.
-- Public API currently does not expose standalone `whoami` / `credits` endpoints.
-- CLI handles this with explicit fallback output instead of hard failure.
+- Account status endpoint: `GET /web_v1/user/credit-user-info`.
 
 ## Local Development
 

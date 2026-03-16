@@ -1,23 +1,37 @@
 import type {
   CrawlStartResponse,
   CrawlStatusResponse,
-  CreditsResponse,
   MapResponse,
   ScrapeResponse,
   SearchResponse,
-  WhoAmIResponse
+  StatusResponse
 } from '../types/api';
 
 export function formatLoginSuccess(configPath: string): string {
   return `API key saved to: ${configPath}`;
 }
 
-export function formatWhoami(data: WhoAmIResponse): string {
+export function formatLogoutResult(cleared: boolean, configPath: string): string {
+  if (!cleared) {
+    return 'No local API key found. Already logged out.';
+  }
+
+  return `API key removed from: ${configPath}`;
+}
+
+export function formatStatus(data: StatusResponse): string {
   return [
-    `Account: ${data.name ?? 'N/A'}`,
+    `Username: ${data.username || 'N/A'}`,
     `Email: ${data.email}`,
-    `Plan: ${data.plan ?? 'N/A'}`,
-    `ID: ${data.id}`
+    `Created At: ${data.createdAt ?? 'N/A'}`,
+    `Credit Level: ${data.creditLevel}`,
+    `Total Credits: ${data.totalCredits}`,
+    `Remaining Credits: ${data.remainCredits}`,
+    `Consumed Credits: ${data.consumedCredits}`,
+    `Today Credits: ${data.todayCredits}`,
+    `Next Reset At: ${data.nextResetAt ?? 'N/A'}`,
+    `Expired At: ${data.expiredAt ?? 'N/A'}`,
+    `Package: ${data.packageTitle ?? 'N/A'}`
   ].join('\n');
 }
 
@@ -39,21 +53,12 @@ export function formatSearch(data: SearchResponse): string {
   return `Query: ${data.query}\n\n${lines.join('\n\n')}`;
 }
 
-export function formatCredits(data: CreditsResponse): string {
-  return [
-    `Remaining: ${data.remaining}`,
-    `Used: ${data.used}`,
-    `Total: ${data.total}`,
-    `Reset At: ${data.resetAt ?? 'N/A'}`
-  ].join('\n');
-}
-
 export function formatMap(data: MapResponse): string {
   if (data.links.length === 0) {
     return `Source URL: ${data.url}\nTotal links: 0`;
   }
 
-  const lines = data.links.map((link, index) => `${index + 1}. ${link.title ?? 'Untitled'}\n   ${link.url}`);
+  const lines = data.links.map((link, index) => `${index + 1}. ${link.url}`);
   return `Source URL: ${data.url}\nTotal links: ${data.total}\n\n${lines.join('\n\n')}`;
 }
 

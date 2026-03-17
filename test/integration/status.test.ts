@@ -4,6 +4,30 @@ import { ApiError } from '../../src/core/errors';
 import { runCliWithMocks } from '../fixtures/cli';
 
 describe('status command', () => {
+  it('always uses the account API domain', async () => {
+    let observedBaseUrl = '';
+
+    const result = await runCliWithMocks(['status', '--api-key', 'flag-key'], {
+      env: { XCRAWL_API_BASE_URL: 'https://run.xcrawl.com' },
+      onCreateApiClient: (config) => {
+        observedBaseUrl = config.apiBaseUrl;
+      },
+      api: {
+        get: async () => ({
+          code: 200,
+          msg: 'SUCCESS',
+          data: {
+            username: 'john_doe',
+            email: 'john@example.com'
+          }
+        })
+      }
+    });
+
+    expect(result.code).toBe(0);
+    expect(observedBaseUrl).toBe('https://api.xcrawl.com');
+  });
+
   it('returns user profile and credit overview on success', async () => {
     const result = await runCliWithMocks(['status'], {
       env: { XCRAWL_API_KEY: 'env-key' },

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.3] - 2026-03-17
+
+### Changed
+- Updated `status` command to always call `https://api.xcrawl.com/web_v1/user/credit-user-info`.
+- Removed `--api-base-url` override from `status` to avoid ambiguous routing behavior.
+- Refined `README.md` structure to a more user-facing layout and removed the local development section.
+
 ## [0.2.0] - 2026-03-12
 
 ### Added

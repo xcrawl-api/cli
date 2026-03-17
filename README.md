@@ -1,68 +1,71 @@
 # XCrawl CLI
 
-XCrawl CLI is a Node.js command-line tool for scraping, searching, mapping, and crawling websites.
+XCrawl CLI is the official command-line interface for XCrawl.
+Use it to scrape pages, run search queries, map sites, and manage crawl jobs from your terminal.
 
-## Install
+## Installation
 
-### Run with npx (no global install)
+Run directly with `npx`:
 
 ```bash
 npx -y @xcrawl/cli@latest doctor
 ```
 
-### Install globally with npm
+Install globally with npm:
 
 ```bash
 npm install -g @xcrawl/cli
 xcrawl --help
 ```
 
-## Authenticate
+## Quick Start
 
-Use either login command or environment variable.
+Authenticate:
 
 ```bash
-# Save API key locally
 xcrawl login --api-key <your_api_key>
-
-# Clear local API key
-xcrawl logout
-
-# Or use env var
-export XCRAWL_API_KEY=<your_api_key>
 ```
 
-## Quickstart
+Run core commands:
 
 ```bash
-# Scrape a page
 xcrawl scrape https://example.com --format markdown
-
-# Search
 xcrawl search "xcrawl cli" --limit 10
-
-# Show account and credit package status
 xcrawl status
-
-# Map links in a site
 xcrawl map https://example.com --limit 10
-
-# Start a crawl
 xcrawl crawl https://example.com
-
-# Check crawl status
 xcrawl crawl status <job-id>
 ```
 
-Default shortcut:
+Default shortcut for scrape:
 
 ```bash
 xcrawl https://example.com
-# same as:
-xcrawl scrape https://example.com
 ```
 
-## Batch Scraping
+## Authentication
+
+Use either local login or environment variable:
+
+```bash
+xcrawl login --api-key <your_api_key>
+xcrawl logout
+export XCRAWL_API_KEY=<your_api_key>
+```
+
+## Common Commands
+
+```bash
+xcrawl scrape <url...> [--format markdown|json|html|screenshot|text] [--output <path>] [--json]
+xcrawl search <query> [--limit <n>] [--json]
+xcrawl map <url> [--limit <n>] [--json]
+xcrawl crawl <url> [--wait]
+xcrawl crawl status <job-id>
+xcrawl status [--json]
+xcrawl doctor [--json]
+```
+
+Batch scrape example:
 
 ```bash
 xcrawl scrape --input ./urls.txt --concurrency 3 --json
@@ -70,7 +73,9 @@ xcrawl scrape --input ./urls.txt --concurrency 3 --json
 
 `urls.txt` should contain one URL per line. Lines starting with `#` are ignored.
 
-## Config
+## Configuration
+
+Manage config values:
 
 ```bash
 xcrawl config keys
@@ -78,7 +83,7 @@ xcrawl config get api-base-url
 xcrawl config set api-base-url https://run.xcrawl.com
 ```
 
-Config priority:
+Configuration priority:
 1. CLI flags
 2. Environment variables
 3. Local config file `~/.xcrawl/config.json`
@@ -93,28 +98,12 @@ Environment variables:
 
 ## Output
 
-- Default: human-readable text
-- `--json`: machine-readable JSON
-- `--output`: write output to file
-- Multi-URL scrape defaults to `.xcrawl/` when no output path is provided
+- Default output is human-readable text.
+- Use `--json` for machine-readable output.
+- Use `--output <path>` to save output to a file.
+- Multi-URL scrape defaults to `.xcrawl/` when no output path is provided.
 
-## Public API Notes
+## API Routing Notes
 
 - Default API base URL is `https://run.xcrawl.com`.
-- Account status endpoint: `GET /web_v1/user/credit-user-info`.
-
-## Local Development
-
-```bash
-npm install
-npm run build
-npm run test
-npm run lint
-```
-
-Real API smoke test:
-
-```bash
-export XCRAWL_API_KEY=<your_api_key>
-npm run smoke
-```
+- `status` always calls `https://api.xcrawl.com/web_v1/user/credit-user-info`.

@@ -5,6 +5,7 @@ import { PassThrough } from 'node:stream';
 
 import { runCli } from '../../src/index';
 import type { ApiRequestOptions } from '../../src/types/api';
+import type { RuntimeConfig } from '../../src/types/config';
 
 interface MockApi {
   get?: (path: string, options?: ApiRequestOptions) => Promise<unknown>;
@@ -23,6 +24,7 @@ export async function runCliWithMocks(
   options: {
     env?: NodeJS.ProcessEnv;
     api?: MockApi;
+    onCreateApiClient?: (config: RuntimeConfig) => void;
     version?: string;
     homeDir?: string;
   } = {}
@@ -50,7 +52,9 @@ export async function runCliWithMocks(
     homeDir,
     cwd: homeDir,
     version: options.version ?? '0.1.0-test',
-    createApiClient: () => ({
+    createApiClient: (config) => {
+      options.onCreateApiClient?.(config);
+      return {
       get: async <T>(requestPath: string, requestOptions?: ApiRequestOptions) => {
         if (!options.api?.get) {
           throw new Error(`GET mock not configured: ${requestPath}`);
@@ -63,7 +67,8 @@ export async function runCliWithMocks(
         }
         return options.api.post(requestPath, requestOptions) as Promise<T>;
       }
-    })
+    };
+    }
   });
 
   stdoutStream.end();

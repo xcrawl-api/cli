@@ -82,7 +82,7 @@ export function registerDoctorCommand(program: Command, context: CliContext): vo
       if (runtime.apiKey) {
         try {
           const client = context.createApiClient(runtime);
-          await fetchStatus(client);
+          await fetchStatus(client, runtime.apiKey);
           report.checks.push({
             name: 'api_connectivity',
             ok: true,

@@ -33,12 +33,12 @@ export function registerStatusCommand(program: Command, context: CliContext): vo
         debug: options.debug
       });
 
-      runtime.apiKey = requireApiKey(runtime.apiKey);
+      const appKey = requireApiKey(runtime.apiKey);
       runtime.apiBaseUrl = ACCOUNT_API_BASE_URL;
 
-      const client = context.createApiClient(runtime);
+      const client = context.createApiClient({ ...runtime, apiKey: undefined });
       const outputPath = resolveOutputPath(context, options.output);
-      const result = await fetchStatus(client);
+      const result = await fetchStatus(client, appKey);
 
       await renderOutput({
         ctx: { stdout: context.stdout },

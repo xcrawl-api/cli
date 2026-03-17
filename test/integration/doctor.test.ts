@@ -13,14 +13,20 @@ describe('doctor command', () => {
   });
 
   it('supports connectivity check when api key exists', async () => {
+    let observedAppKey = '';
+
     const result = await runCliWithMocks(['doctor', '--api-key', 'flag-key'], {
       api: {
-        get: async () => ({ id: 'u1', email: 'u@example.com' })
+        get: async (_path, options) => {
+          observedAppKey = String(options?.query?.app_key ?? '');
+          return { id: 'u1', email: 'u@example.com' };
+        }
       }
     });
 
     expect(result.code).toBe(0);
     expect(result.stdout).toContain('api_connectivity');
+    expect(observedAppKey).toBe('flag-key');
   });
 
   it('fails when timeout is invalid', async () => {

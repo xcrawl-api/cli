@@ -28,8 +28,12 @@ function isStatusEnvelope(value: RawStatusEnvelope | RawStatusData): value is Ra
   return Object.prototype.hasOwnProperty.call(value, 'data');
 }
 
-export async function fetchStatus(client: ApiTransport): Promise<StatusResponse> {
-  const raw = await client.get<RawStatusEnvelope | RawStatusData>('/web_v1/user/credit-user-info');
+export async function fetchStatus(client: ApiTransport, appKey: string): Promise<StatusResponse> {
+  const raw = await client.get<RawStatusEnvelope | RawStatusData>('/web_v1/user/credit-user-info', {
+    query: {
+      app_key: appKey
+    }
+  });
 
   if (isStatusEnvelope(raw)) {
     return mapStatusData(raw.data ?? {});

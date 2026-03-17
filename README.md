@@ -107,3 +107,4 @@ Environment variables:
 
 - Default API base URL is `https://run.xcrawl.com`.
 - `status` always calls `https://api.xcrawl.com/web_v1/user/credit-user-info`.
+- `status` authentication is sent as query param: `app_key=<your_api_key>`.

@@ -6,6 +6,7 @@ import { runCliWithMocks } from '../fixtures/cli';
 describe('status command', () => {
   it('always uses the account API domain', async () => {
     let observedBaseUrl = '';
+    let observedAppKey = '';
 
     const result = await runCliWithMocks(['status', '--api-key', 'flag-key'], {
       env: { XCRAWL_API_BASE_URL: 'https://run.xcrawl.com' },
@@ -13,19 +14,23 @@ describe('status command', () => {
         observedBaseUrl = config.apiBaseUrl;
       },
       api: {
-        get: async () => ({
+        get: async (_path, options) => {
+          observedAppKey = String(options?.query?.app_key ?? '');
+          return {
           code: 200,
           msg: 'SUCCESS',
           data: {
             username: 'john_doe',
             email: 'john@example.com'
           }
-        })
+        };
+        }
       }
     });
 
     expect(result.code).toBe(0);
     expect(observedBaseUrl).toBe('https://api.xcrawl.com');
+    expect(observedAppKey).toBe('flag-key');
   });
 
   it('returns user profile and credit overview on success', async () => {

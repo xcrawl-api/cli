@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.6] - 2026-03-18
+
+### Changed
+- Removed the `doctor` command and related user-facing references.
+- Removed the `Username` line from human-readable `status` output.
+- Updated smoke script and README examples to match the current command set.
+
 ## [0.2.5] - 2026-03-17
 
 ### Changed

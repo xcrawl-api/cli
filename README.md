@@ -8,7 +8,7 @@ Use it to scrape pages, run search queries, map sites, and manage crawl jobs fro
 Run directly with `npx`:
 
 ```bash
-npx -y @xcrawl/cli@latest doctor
+npx -y @xcrawl/cli@latest --help
 ```
 
 Install globally with npm:
@@ -62,7 +62,6 @@ xcrawl map <url> [--limit <n>] [--json]
 xcrawl crawl <url> [--wait]
 xcrawl crawl status <job-id>
 xcrawl status [--json]
-xcrawl doctor [--json]
 ```
 
 Batch scrape example:

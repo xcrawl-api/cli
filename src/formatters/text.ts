@@ -21,7 +21,6 @@ export function formatLogoutResult(cleared: boolean, configPath: string): string
 
 export function formatStatus(data: StatusResponse): string {
   return [
-    `Username: ${data.username || 'N/A'}`,
     `Email: ${data.email}`,
     `Created At: ${data.createdAt ?? 'N/A'}`,
     `Credit Level: ${data.creditLevel}`,
@@ -84,20 +83,4 @@ export function formatConfigGet(key: string, value: unknown): string {
 
 export function formatConfigSet(key: string, value: unknown, configPath: string): string {
   return [`Updated ${key}: ${String(value)}`, `Config path: ${configPath}`].join('\n');
-}
-
-export interface DoctorCheck {
-  name: string;
-  ok: boolean;
-  detail: string;
-}
-
-export interface DoctorReport {
-  version: string;
-  checks: DoctorCheck[];
-}
-
-export function formatDoctorReport(report: DoctorReport): string {
-  const lines = report.checks.map((check) => `${check.ok ? 'OK' : 'FAIL'} ${check.name}: ${check.detail}`);
-  return [`XCrawl CLI ${report.version}`, ...lines].join('\n');
 }

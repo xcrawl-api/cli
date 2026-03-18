@@ -70,7 +70,7 @@ export class ApiClient implements ApiTransport {
         const message = extractApiMessage(parsed) ?? `Request failed (${response.status})`;
         throw new ApiError(
           message,
-          'Check your API key and request arguments, or retry later. You can run `xcrawl doctor` for diagnostics.',
+          'Check your API key and request arguments, or retry later.',
           response.status,
           parsed
         );

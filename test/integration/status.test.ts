@@ -58,7 +58,8 @@ describe('status command', () => {
     });
 
     expect(result.code).toBe(0);
-    expect(result.stdout).toContain('Username: john_doe');
+    expect(result.stdout).not.toContain('Username:');
+    expect(result.stdout).toContain('Email: john@example.com');
     expect(result.stdout).toContain('Remaining Credits: 6500');
     expect(result.stdout).toContain('Package: Pro Plan');
   });

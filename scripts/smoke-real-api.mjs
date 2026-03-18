@@ -24,9 +24,7 @@ function main() {
     process.exit(1);
   }
 
-  printSection('whoami', runCli(['whoami', '--json']));
-  printSection('credits', runCli(['credits', '--json']));
-  printSection('doctor', runCli(['doctor', '--json']));
+  printSection('status', runCli(['status', '--json']));
   printSection('search', runCli(['search', 'xcrawl', '--limit', '2', '--json']));
   printSection('scrape', runCli(['scrape', 'https://example.com', '--format', 'markdown', '--json']));
   printSection('map', runCli(['map', 'https://example.com', '--limit', '2', '--json']));

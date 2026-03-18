@@ -7,7 +7,6 @@ import { Command, CommanderError } from 'commander';
 import { ApiClient } from './api/client';
 import { registerConfigCommand } from './commands/config';
 import { registerCrawlCommand } from './commands/crawl';
-import { registerDoctorCommand } from './commands/doctor';
 import { registerInitCommand } from './commands/init';
 import { registerLoginCommand } from './commands/login';
 import { registerLogoutCommand } from './commands/logout';
@@ -25,7 +24,6 @@ const KNOWN_COMMANDS = new Set([
   'status',
   'scrape',
   'search',
-  'doctor',
   'map',
   'crawl',
   'config',
@@ -91,7 +89,6 @@ export function createProgram(context: CliContext): Command {
   registerStatusCommand(program, context);
   registerScrapeCommand(program, context);
   registerSearchCommand(program, context);
-  registerDoctorCommand(program, context);
 
   registerMapCommand(program, context);
   registerCrawlCommand(program, context);

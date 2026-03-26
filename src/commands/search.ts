@@ -1,7 +1,7 @@
 import type { Command } from 'commander';
 
 import { searchWeb } from '../api/search';
-import { requireApiKey } from '../core/auth';
+import { ensureApiKey } from '../core/auth';
 import { renderOutput } from '../core/output';
 import { renderTable } from '../formatters/table';
 import { formatSearch } from '../formatters/text';
@@ -61,7 +61,7 @@ export function registerSearchCommand(program: Command, context: CliContext): vo
         debug: options.debug
       });
 
-      runtime.apiKey = requireApiKey(runtime.apiKey);
+      runtime.apiKey = await ensureApiKey(context, runtime.apiKey, { output: context.stderr });
       const client = context.createApiClient(runtime);
 
       const result = await searchWeb(client, {

@@ -27,13 +27,22 @@ export async function runCliWithMocks(
     onCreateApiClient?: (config: RuntimeConfig) => void;
     version?: string;
     homeDir?: string;
+    stdinText?: string;
+    isInteractive?: boolean;
+    openExternalUrl?: (url: string) => Promise<void>;
+    sleep?: (ms: number) => Promise<void>;
   } = {}
 ): Promise<RunCliResult> {
+  const stdinStream = new PassThrough();
   const stdoutStream = new PassThrough();
   const stderrStream = new PassThrough();
 
   let stdout = '';
   let stderr = '';
+
+  setImmediate(() => {
+    stdinStream.end(options.stdinText ?? '');
+  });
 
   stdoutStream.on('data', (chunk: Buffer) => {
     stdout += chunk.toString('utf8');
@@ -46,12 +55,16 @@ export async function runCliWithMocks(
   const homeDir = options.homeDir ?? (await mkdtemp(path.join(os.tmpdir(), 'xcrawl-cli-test-')));
 
   const code = await runCli(argv, {
+    stdin: stdinStream,
     stdout: stdoutStream,
     stderr: stderrStream,
     env: options.env ?? {},
     homeDir,
     cwd: homeDir,
+    isInteractive: options.isInteractive ?? false,
     version: options.version ?? '0.1.0-test',
+    openExternalUrl: options.openExternalUrl ?? (async () => {}),
+    sleep: options.sleep ?? (async () => {}),
     createApiClient: (config) => {
       options.onCreateApiClient?.(config);
       return {

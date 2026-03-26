@@ -20,9 +20,16 @@ xcrawl --help
 
 ## Quick Start
 
-Authenticate:
+Initialize authentication with browser login:
 
 ```bash
+npx -y @xcrawl/cli@latest init -y --browser
+```
+
+Or authenticate after installation:
+
+```bash
+xcrawl login --browser
 xcrawl login --api-key <your_api_key>
 ```
 
@@ -45,17 +52,38 @@ xcrawl https://example.com
 
 ## Authentication
 
-Use either local login or environment variable:
+XCrawl CLI supports browser authentication, manual API key entry, and environment variables:
 
 ```bash
+xcrawl init -y --browser
+xcrawl login
+xcrawl login --browser
 xcrawl login --api-key <your_api_key>
 xcrawl logout
 export XCRAWL_API_KEY=<your_api_key>
 ```
 
+Saved credentials are stored in `~/.xcrawl/config.json`.
+
+If no API key is configured, running `xcrawl` or any authenticated command prompts:
+
+```text
+XCrawl CLI
+Turn websites into LLM-ready data
+
+Welcome! To get started, authenticate with your XCrawl account.
+
+1. Login with browser (recommended)
+2. Enter API key manually
+
+Tip: You can also set XCRAWL_API_KEY environment variable
+```
+
 ## Common Commands
 
 ```bash
+xcrawl init [-y] [--browser | --api-key <key>]
+xcrawl login [--browser | --api-key <key>] [--json]
 xcrawl scrape <url...> [--format markdown|json|html|screenshot|text] [--output <path>] [--json]
 xcrawl search <query> [--limit <n>] [--json]
 xcrawl map <url> [--limit <n>] [--json]

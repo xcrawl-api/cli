@@ -1,7 +1,7 @@
 import type { Command } from 'commander';
 
 import { fetchCrawlStatus, startCrawl, waitForCrawlCompletion } from '../api/crawl';
-import { requireApiKey } from '../core/auth';
+import { ensureApiKey } from '../core/auth';
 import { ValidationError } from '../core/errors';
 import { renderOutput } from '../core/output';
 import { formatCrawlStart, formatCrawlStatus } from '../formatters/text';
@@ -63,7 +63,7 @@ export function registerCrawlCommand(program: Command, context: CliContext): voi
       debug: options.debug
     });
 
-    runtime.apiKey = requireApiKey(runtime.apiKey);
+    runtime.apiKey = await ensureApiKey(context, runtime.apiKey, { output: context.stderr });
     const client = context.createApiClient(runtime);
     const outputPath = resolveOutputPath(context, options.output);
 
@@ -109,7 +109,7 @@ export function registerCrawlCommand(program: Command, context: CliContext): voi
       debug: options.debug
     });
 
-    runtime.apiKey = requireApiKey(runtime.apiKey);
+    runtime.apiKey = await ensureApiKey(context, runtime.apiKey, { output: context.stderr });
     const client = context.createApiClient(runtime);
     const outputPath = resolveOutputPath(context, options.output);
     const status = await fetchCrawlStatus(client, jobId);

@@ -12,6 +12,15 @@ export interface ApiTransport {
   post<T>(path: string, options?: ApiRequestOptions): Promise<T>;
 }
 
+export interface CliAuthStatusResponse {
+  code?: string | number;
+  message?: string;
+  msg?: string;
+  data?: {
+    api_key?: string;
+  };
+}
+
 export interface StatusResponse {
   username: string;
   email: string;

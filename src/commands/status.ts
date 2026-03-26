@@ -1,7 +1,7 @@
 import type { Command } from 'commander';
 
 import { fetchStatus } from '../api/status';
-import { requireApiKey } from '../core/auth';
+import { ensureApiKey } from '../core/auth';
 import { ACCOUNT_API_BASE_URL } from '../core/constants';
 import { renderOutput } from '../core/output';
 import { formatStatus } from '../formatters/text';
@@ -33,7 +33,7 @@ export function registerStatusCommand(program: Command, context: CliContext): vo
         debug: options.debug
       });
 
-      const appKey = requireApiKey(runtime.apiKey);
+      const appKey = await ensureApiKey(context, runtime.apiKey, { output: context.stderr });
       runtime.apiBaseUrl = ACCOUNT_API_BASE_URL;
 
       const client = context.createApiClient({ ...runtime, apiKey: undefined });

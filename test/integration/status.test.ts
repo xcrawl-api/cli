@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
 
 import { ApiError } from '../../src/core/errors';
 import { runCliWithMocks } from '../fixtures/cli';
@@ -121,6 +123,46 @@ describe('status command', () => {
     const parsed = JSON.parse(result.stdout) as { packageTitle: string | null; creditLevel: number };
     expect(parsed.packageTitle).toBeNull();
     expect(parsed.creditLevel).toBe(0);
+  });
+
+  it('prompts for browser authentication and keeps json output clean when api key is missing', async () => {
+    const result = await runCliWithMocks(['status', '--json'], {
+      isInteractive: true,
+      stdinText: '1\n',
+      api: {
+        post: async () => ({
+          code: '200',
+          data: {
+            api_key: 'xc-status-browser-key'
+          }
+        }),
+        get: async () => ({
+          code: 200,
+          msg: 'SUCCESS',
+          data: {
+            username: 'john_doe',
+            email: 'john@example.com',
+            created_at: '2024-01-15 10:30:00',
+            credit_level: 1,
+            total_credits: 100,
+            remain_credits: 50,
+            consumed_credits: 50,
+            today_credits: 10,
+            next_reset_at: null,
+            expired_at: null,
+            package_title: 'Starter'
+          }
+        })
+      }
+    });
+
+    expect(result.code).toBe(0);
+    expect(result.stderr).toContain('Welcome! To get started, authenticate with your XCrawl account.');
+    expect(() => JSON.parse(result.stdout)).not.toThrow();
+
+    const configPath = path.join(result.homeDir, '.xcrawl', 'config.json');
+    const content = await readFile(configPath, 'utf8');
+    expect(content).toContain('xc-status-browser-key');
   });
 
   it('treats removed whoami command as unknown command', async () => {

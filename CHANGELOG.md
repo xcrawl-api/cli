@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.7] - 2026-03-26
+
+### Added
+- Added browser-based authentication with PKCE-style challenge generation and XCrawl dashboard handoff.
+- Added `xcrawl init -y --browser` for non-interactive setup during install or onboarding.
+- Added interactive authentication fallback when `xcrawl` or an authenticated command runs without an API key.
+
+### Changed
+- Updated `login` to support browser authentication and interactive auth method selection.
+- Kept authenticated command JSON output clean by routing auth prompts to stderr before command results.
+- Expanded integration coverage for browser auth, root onboarding flow, and non-interactive init validation.
+
 ## [0.2.6] - 2026-03-18
 
 ### Changed

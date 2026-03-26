@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 
+import { spawn } from 'node:child_process';
 import os from 'node:os';
 import path from 'node:path';
 import { Command, CommanderError } from 'commander';
 
 import { ApiClient } from './api/client';
+import { promptForAuthentication } from './core/auth';
+import { readLocalConfig, resolveRuntimeConfig } from './core/config';
 import { registerConfigCommand } from './commands/config';
 import { registerCrawlCommand } from './commands/crawl';
 import { registerInitCommand } from './commands/init';
@@ -15,6 +18,7 @@ import { registerScrapeCommand } from './commands/scrape';
 import { registerSearchCommand } from './commands/search';
 import { registerStatusCommand } from './commands/status';
 import { formatErrorForUser } from './core/errors';
+import { readEnvConfig } from './core/env';
 import type { CliContext } from './types/cli';
 import type { RuntimeConfig } from './types/config';
 
@@ -59,15 +63,41 @@ function normalizeArgv(argv: string[]): string[] {
   return ['scrape', ...argv];
 }
 
+function openExternalUrl(url: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const command =
+      process.platform === 'darwin'
+        ? ['open', url]
+        : process.platform === 'win32'
+          ? ['cmd', '/c', 'start', '', url]
+          : ['xdg-open', url];
+
+    const child = spawn(command[0], command.slice(1), {
+      detached: process.platform !== 'win32',
+      stdio: 'ignore'
+    });
+
+    child.once('error', reject);
+    child.once('spawn', () => {
+      child.unref();
+      resolve();
+    });
+  });
+}
+
 export function createDefaultContext(overrides: Partial<CliContext> = {}): CliContext {
   return {
+    stdin: process.stdin,
     stdout: process.stdout,
     stderr: process.stderr,
     env: process.env,
     cwd: process.cwd(),
     homeDir: os.homedir(),
+    isInteractive: Boolean(process.stdin.isTTY && process.stdout.isTTY),
     now: () => new Date(),
     version: process.env.npm_package_version ?? '0.1.0',
+    openExternalUrl,
+    sleep: (ms: number) => new Promise((resolve) => setTimeout(resolve, ms)),
     createApiClient: (config: RuntimeConfig) =>
       new ApiClient({
         baseUrl: config.apiBaseUrl,
@@ -93,7 +123,7 @@ export function createProgram(context: CliContext): Command {
   registerMapCommand(program, context);
   registerCrawlCommand(program, context);
   registerConfigCommand(program, context);
-  registerInitCommand(program);
+  registerInitCommand(program, context);
 
   program.showHelpAfterError('(Use --help to view command usage)');
   program.exitOverride();
@@ -107,6 +137,22 @@ export async function runCli(argv: string[], contextOverrides: Partial<CliContex
 
   try {
     const normalizedArgv = normalizeArgv(argv);
+
+    if (normalizedArgv.length === 0) {
+      const runtime = resolveRuntimeConfig({
+        env: readEnvConfig(context.env),
+        local: await readLocalConfig(context.homeDir)
+      });
+
+      if (runtime.apiKey) {
+        context.stdout.write(program.helpInformation());
+        return 0;
+      }
+
+      await promptForAuthentication(context, context.stdout);
+      return 0;
+    }
+
     await program.parseAsync(normalizedArgv, { from: 'user' });
     return 0;
   } catch (error) {

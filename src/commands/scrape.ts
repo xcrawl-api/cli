@@ -3,7 +3,7 @@ import path from 'node:path';
 import type { Command } from 'commander';
 
 import { scrapeUrl } from '../api/scrape';
-import { requireApiKey } from '../core/auth';
+import { ensureApiKey } from '../core/auth';
 import { ValidationError } from '../core/errors';
 import { renderOutput, writeBatchOutput } from '../core/output';
 import { toStableJson } from '../formatters/json';
@@ -97,7 +97,7 @@ export function registerScrapeCommand(program: Command, context: CliContext): vo
         defaultFormat: options.format
       });
 
-      runtime.apiKey = requireApiKey(runtime.apiKey);
+      runtime.apiKey = await ensureApiKey(context, runtime.apiKey, { output: context.stderr });
 
       const format = options.format ?? runtime.defaultFormat;
       const client = context.createApiClient(runtime);

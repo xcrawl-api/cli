@@ -1,7 +1,7 @@
 import type { Command } from 'commander';
 
 import { fetchMap } from '../api/map';
-import { requireApiKey } from '../core/auth';
+import { ensureApiKey } from '../core/auth';
 import { renderOutput } from '../core/output';
 import { formatMap } from '../formatters/text';
 import type { CliContext } from '../types/cli';
@@ -42,7 +42,7 @@ export function registerMapCommand(program: Command, context: CliContext): void 
         debug: options.debug
       });
 
-      runtime.apiKey = requireApiKey(runtime.apiKey);
+      runtime.apiKey = await ensureApiKey(context, runtime.apiKey, { output: context.stderr });
       const client = context.createApiClient(runtime);
 
       const result = await fetchMap(client, {

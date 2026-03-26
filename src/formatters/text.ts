@@ -1,3 +1,4 @@
+import { formatAuthGettingStarted } from '../core/auth';
 import type {
   CrawlStartResponse,
   CrawlStatusResponse,
@@ -8,7 +9,7 @@ import type {
 } from '../types/api';
 
 export function formatLoginSuccess(configPath: string): string {
-  return `API key saved to: ${configPath}`;
+  return [`API key saved to: ${configPath}`, '', formatAuthGettingStarted()].join('\n');
 }
 
 export function formatLogoutResult(cleared: boolean, configPath: string): string {

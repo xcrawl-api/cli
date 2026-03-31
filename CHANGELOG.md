@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.9] - 2026-03-31
+
+### Fixed
+- Fixed installed CLI builds reporting `XCrawl cli v0.1.0` when `npm_package_version` is not available at runtime.
+
 ## [0.2.8] - 2026-03-31
 
 ### Changed

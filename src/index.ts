@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { spawn } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { Command, CommanderError } from 'commander';
@@ -85,17 +86,39 @@ function openExternalUrl(url: string): Promise<void> {
   });
 }
 
+function resolveCliVersion(env: NodeJS.ProcessEnv): string {
+  const envVersion = env.npm_package_version;
+  if (typeof envVersion === 'string' && envVersion.trim().length > 0) {
+    return envVersion;
+  }
+
+  try {
+    const packageJsonPath = path.resolve(__dirname, '..', 'package.json');
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8')) as { version?: unknown };
+
+    if (typeof packageJson.version === 'string' && packageJson.version.trim().length > 0) {
+      return packageJson.version;
+    }
+  } catch {
+    // Fall back to a safe default if package metadata cannot be read.
+  }
+
+  return '0.1.0';
+}
+
 export function createDefaultContext(overrides: Partial<CliContext> = {}): CliContext {
+  const env = overrides.env ?? process.env;
+
   return {
     stdin: process.stdin,
     stdout: process.stdout,
     stderr: process.stderr,
-    env: process.env,
+    env,
     cwd: process.cwd(),
     homeDir: os.homedir(),
     isInteractive: Boolean(process.stdin.isTTY && process.stdout.isTTY),
     now: () => new Date(),
-    version: process.env.npm_package_version ?? '0.1.0',
+    version: overrides.version ?? resolveCliVersion(env),
     openExternalUrl,
     sleep: (ms: number) => new Promise((resolve) => setTimeout(resolve, ms)),
     createApiClient: (config: RuntimeConfig) =>

@@ -10,9 +10,6 @@ function toNumber(value: unknown): number {
 
 function mapStatusData(raw: RawStatusData): StatusResponse {
   return {
-    username: raw.username ?? '',
-    email: raw.email ?? '',
-    createdAt: raw.created_at,
     creditLevel: toNumber(raw.credit_level),
     totalCredits: toNumber(raw.total_credits),
     remainCredits: toNumber(raw.remain_credits),

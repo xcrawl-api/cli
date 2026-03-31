@@ -1,4 +1,5 @@
 import type { ApiTransport } from './api';
+import type { StatusResponse } from './api';
 import type { RuntimeConfig } from './config';
 
 export interface CliContext {
@@ -14,4 +15,8 @@ export interface CliContext {
   openExternalUrl: (url: string) => Promise<void>;
   sleep: (ms: number) => Promise<void>;
   createApiClient: (config: RuntimeConfig) => ApiTransport;
+}
+
+export interface StatusOutput extends StatusResponse {
+  cliVersion: string;
 }

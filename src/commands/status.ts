@@ -5,7 +5,7 @@ import { ensureApiKey } from '../core/auth';
 import { ACCOUNT_API_BASE_URL } from '../core/constants';
 import { renderOutput } from '../core/output';
 import { formatStatus } from '../formatters/text';
-import type { CliContext } from '../types/cli';
+import type { CliContext, StatusOutput } from '../types/cli';
 import { parsePositiveInt } from '../utils/validate';
 import { resolveCommandRuntimeConfig, resolveOutputPath } from './shared';
 
@@ -20,7 +20,7 @@ interface StatusOptions {
 export function registerStatusCommand(program: Command, context: CliContext): void {
   program
     .command('status')
-    .description('Show account profile and credit package status')
+    .description('Show account credit package status')
     .option('--api-key <key>', 'Override API key')
     .option('--timeout <ms>', 'Request timeout in milliseconds')
     .option('--debug', 'Enable debug output')
@@ -39,10 +39,14 @@ export function registerStatusCommand(program: Command, context: CliContext): vo
       const client = context.createApiClient({ ...runtime, apiKey: undefined });
       const outputPath = resolveOutputPath(context, options.output);
       const result = await fetchStatus(client, appKey);
+      const output: StatusOutput = {
+        ...result,
+        cliVersion: context.version
+      };
 
       await renderOutput({
         ctx: { stdout: context.stdout },
-        data: result,
+        data: output,
         json: options.json,
         outputPath,
         renderText: formatStatus

@@ -19,13 +19,12 @@ describe('status command', () => {
         get: async (_path, options) => {
           observedAppKey = String(options?.query?.app_key ?? '');
           return {
-          code: 200,
-          msg: 'SUCCESS',
-          data: {
-            username: 'john_doe',
-            email: 'john@example.com'
-          }
-        };
+            code: 200,
+            msg: 'SUCCESS',
+            data: {
+              remain_credits: 100
+            }
+          };
         }
       }
     });
@@ -43,9 +42,6 @@ describe('status command', () => {
           code: 200,
           msg: 'SUCCESS',
           data: {
-            username: 'john_doe',
-            email: 'john@example.com',
-            created_at: '2024-01-15 10:30:00',
             credit_level: 2,
             total_credits: 10000,
             remain_credits: 6500,
@@ -60,8 +56,10 @@ describe('status command', () => {
     });
 
     expect(result.code).toBe(0);
+    expect(result.stdout).toContain('XCrawl cli v0.1.0-test');
     expect(result.stdout).not.toContain('Username:');
-    expect(result.stdout).toContain('Email: john@example.com');
+    expect(result.stdout).not.toContain('Email:');
+    expect(result.stdout).not.toContain('Created At:');
     expect(result.stdout).toContain('Remaining Credits: 6500');
     expect(result.stdout).toContain('Package: Pro Plan');
   });
@@ -103,9 +101,6 @@ describe('status command', () => {
           code: 200,
           msg: 'SUCCESS',
           data: {
-            username: 'john_doe',
-            email: 'john@example.com',
-            created_at: '2024-01-15 10:30:00',
             credit_level: 0,
             total_credits: 0,
             remain_credits: 0,
@@ -120,9 +115,10 @@ describe('status command', () => {
     });
 
     expect(result.code).toBe(0);
-    const parsed = JSON.parse(result.stdout) as { packageTitle: string | null; creditLevel: number };
+    const parsed = JSON.parse(result.stdout) as { packageTitle: string | null; creditLevel: number; cliVersion: string };
     expect(parsed.packageTitle).toBeNull();
     expect(parsed.creditLevel).toBe(0);
+    expect(parsed.cliVersion).toBe('0.1.0-test');
   });
 
   it('prompts for browser authentication and keeps json output clean when api key is missing', async () => {
@@ -140,9 +136,6 @@ describe('status command', () => {
           code: 200,
           msg: 'SUCCESS',
           data: {
-            username: 'john_doe',
-            email: 'john@example.com',
-            created_at: '2024-01-15 10:30:00',
             credit_level: 1,
             total_credits: 100,
             remain_credits: 50,
@@ -159,6 +152,9 @@ describe('status command', () => {
     expect(result.code).toBe(0);
     expect(result.stderr).toContain('Welcome! To get started, authenticate with your XCrawl account.');
     expect(() => JSON.parse(result.stdout)).not.toThrow();
+
+    const parsed = JSON.parse(result.stdout) as { cliVersion: string };
+    expect(parsed.cliVersion).toBe('0.1.0-test');
 
     const configPath = path.join(result.homeDir, '.xcrawl', 'config.json');
     const content = await readFile(configPath, 'utf8');

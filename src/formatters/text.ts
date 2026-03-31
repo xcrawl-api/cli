@@ -1,12 +1,14 @@
+import chalk from 'chalk';
+
 import { formatAuthGettingStarted } from '../core/auth';
 import type {
   CrawlStartResponse,
   CrawlStatusResponse,
   MapResponse,
   ScrapeResponse,
-  SearchResponse,
-  StatusResponse
+  SearchResponse
 } from '../types/api';
+import type { StatusOutput } from '../types/cli';
 
 export function formatLoginSuccess(configPath: string): string {
   return [`API key saved to: ${configPath}`, '', formatAuthGettingStarted()].join('\n');
@@ -20,10 +22,17 @@ export function formatLogoutResult(cleared: boolean, configPath: string): string
   return `API key removed from: ${configPath}`;
 }
 
-export function formatStatus(data: StatusResponse): string {
+function formatStatusHeader(version: string, color: boolean): string {
+  const brand = color ? chalk.hex('#1ab394')('XCrawl') : 'XCrawl';
+  return `${brand} cli v${version}`;
+}
+
+export function formatStatus(data: StatusOutput, options?: { color?: boolean }): string {
+  const color = options?.color ?? false;
+
   return [
-    `Email: ${data.email}`,
-    `Created At: ${data.createdAt ?? 'N/A'}`,
+    formatStatusHeader(data.cliVersion, color),
+    '',
     `Credit Level: ${data.creditLevel}`,
     `Total Credits: ${data.totalCredits}`,
     `Remaining Credits: ${data.remainCredits}`,

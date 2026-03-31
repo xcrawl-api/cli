@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.8] - 2026-03-31
+
+### Changed
+- Removed `email` and `created at` from `xcrawl status` output to avoid exposing unnecessary account details.
+- Stopped relying on legacy `username`, `email`, and `created_at` fields in `status` response mapping.
+- Added CLI version display to `xcrawl status`, with a themed `XCrawl cli v<version>` header in terminal output.
+
 ## [0.2.7] - 2026-03-26
 
 ### Added

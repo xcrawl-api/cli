@@ -126,6 +126,7 @@ Environment variables:
 ## Output
 
 - Default output is human-readable text.
+- `xcrawl status` starts with `XCrawl cli v<version>` before account usage details.
 - Use `--json` for machine-readable output.
 - Use `--output <path>` to save output to a file.
 - Multi-URL scrape defaults to `.xcrawl/` when no output path is provided.

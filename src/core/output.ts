@@ -12,12 +12,13 @@ export interface RenderOutputInput<T> {
   data: T;
   json?: boolean;
   outputPath?: string;
-  renderText: (data: T) => string;
+  renderText: (data: T, options?: { color: boolean }) => string;
 }
 
 export async function renderOutput<T>(input: RenderOutputInput<T>): Promise<void> {
   const json = input.json ?? false;
-  const content = json ? toStableJson(input.data) : `${input.renderText(input.data)}\n`;
+  const color = !input.outputPath && Boolean((input.ctx.stdout as NodeJS.WriteStream).isTTY);
+  const content = json ? toStableJson(input.data) : `${input.renderText(input.data, { color })}\n`;
 
   if (input.outputPath) {
     await writeUtf8File(input.outputPath, content);

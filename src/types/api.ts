@@ -22,9 +22,6 @@ export interface CliAuthStatusResponse {
 }
 
 export interface StatusResponse {
-  username: string;
-  email: string;
-  createdAt?: string;
   creditLevel: number;
   totalCredits: number;
   remainCredits: number;
@@ -36,9 +33,6 @@ export interface StatusResponse {
 }
 
 export interface RawStatusData {
-  username?: string;
-  email?: string;
-  created_at?: string;
   credit_level?: number;
   total_credits?: number;
   remain_credits?: number;

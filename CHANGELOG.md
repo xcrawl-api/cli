@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.3] - 2026-04-21
+
+### Added
+- Added `serp` command for listing supported SERP engines, inspecting engine schemas, and running live `/v1/serp` queries.
+- Added `scraper` command for listing supported web scrapers, inspecting dynamic schemas, and running `/v1/data` scraper jobs.
+- Added `llm` command for listing supported LLM models, inspecting model parameters, and running `/v1/llm` requests.
+- Added XCrawl batch scrape support to multi-URL `scrape` via `/v1/batch/scrape` with status polling and result hydration.
+
+### Changed
+- Updated multi-URL `scrape` to print batch job summaries before saving per-URL outputs.
+- Expanded README command coverage and API routing notes for `serp`, `scraper`, `llm`, and batch scrape flows.
+
+### Quality
+- Added unit and integration coverage for `serp`, `scraper`, `llm`, and batch scrape execution paths.
+- Verified current release with `npm run build`, `npm run test`, `npm run lint`, plus real API checks for `serp`, `scraper`, `llm`, and batch `scrape`.
+
 ## [0.2.9] - 2026-03-31
 
 ### Fixed

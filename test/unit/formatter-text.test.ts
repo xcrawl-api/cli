@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { formatLogoutResult, formatStatus } from '../../src/formatters/text';
+import {
+  formatLogoutResult,
+  formatSerpEngineDefinition,
+  formatSerpResponse,
+  formatStatus
+} from '../../src/formatters/text';
 
 describe('formatLogoutResult', () => {
   it('returns removed message when api key is cleared', () => {
@@ -30,5 +35,55 @@ describe('formatStatus', () => {
     expect(output).not.toContain('Email:');
     expect(output).not.toContain('Created At:');
     expect(output).toContain('Remaining Credits: 6500');
+  });
+});
+
+describe('formatSerpEngineDefinition', () => {
+  it('renders engine metadata and parameter summaries', () => {
+    const output = formatSerpEngineDefinition({
+      scraper: 'google_search',
+      name: 'Google Search',
+      engine: 'google_search',
+      website: 'Google',
+      websiteUrl: 'google.com',
+      formats: ['json'],
+      version: '1.0.0',
+      description: 'General Google web search.',
+      parameters: [
+        {
+          name: 'q',
+          type: 'string',
+          required: true,
+          group: 'Search Query',
+          description: 'Primary query text.'
+        }
+      ]
+    });
+
+    expect(output).toContain('Scraper: google_search');
+    expect(output).toContain('Description: General Google web search.');
+    expect(output).toContain('q [string] required / Search Query');
+  });
+});
+
+describe('formatSerpResponse', () => {
+  it('renders a summary header before the JSON payload', () => {
+    const output = formatSerpResponse({
+      search_metadata: {
+        status: 'completed',
+        id: 'serp_123'
+      },
+      search_parameters: {
+        engine: 'google_search',
+        q: 'xcrawl'
+      },
+      total_credits_used: 1,
+      organic_results: [{ title: 'XCrawl' }]
+    });
+
+    expect(output).toContain('Status: completed');
+    expect(output).toContain('Search ID: serp_123');
+    expect(output).toContain('Sections: organic_results (1)');
+    expect(output).toContain('"organic_results"');
   });
 });

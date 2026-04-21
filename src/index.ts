@@ -15,6 +15,7 @@ import { registerInitCommand } from './commands/init';
 import { registerLoginCommand } from './commands/login';
 import { registerLogoutCommand } from './commands/logout';
 import { registerMapCommand } from './commands/map';
+import { registerSerpCommand } from './commands/serp';
 import { registerScrapeCommand } from './commands/scrape';
 import { registerSearchCommand } from './commands/search';
 import { registerStatusCommand } from './commands/status';
@@ -29,6 +30,7 @@ const KNOWN_COMMANDS = new Set([
   'status',
   'scrape',
   'search',
+  'serp',
   'map',
   'crawl',
   'config',
@@ -142,6 +144,7 @@ export function createProgram(context: CliContext): Command {
   registerStatusCommand(program, context);
   registerScrapeCommand(program, context);
   registerSearchCommand(program, context);
+  registerSerpCommand(program, context);
 
   registerMapCommand(program, context);
   registerCrawlCommand(program, context);

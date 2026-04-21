@@ -124,6 +124,100 @@ export interface RawSearchResponse {
   total_credits_used?: number;
 }
 
+export interface SerpEngineSummary {
+  scraper: string;
+  name: string;
+  website: string;
+  domain?: string;
+  description?: string;
+}
+
+export interface RawSerpEngineSummary {
+  scraper?: string;
+  website?: string;
+  domain?: string;
+  name?: string;
+  desc?: string;
+}
+
+export interface RawSerpEngineListEnvelope {
+  code?: number;
+  msg?: string;
+  data?: {
+    list?: RawSerpEngineSummary[];
+  } | null;
+}
+
+export interface RawSerpParameterSchema {
+  must?: boolean;
+  name?: string;
+  type?: string;
+  default?: unknown;
+  enum?: unknown[];
+  class_name?: string;
+  description?: string;
+}
+
+export interface RawSerpRequestSchema {
+  type?: string;
+  title?: string;
+  engine?: string;
+  required?: string[];
+  additionalProperties?: boolean;
+  properties?: Record<string, RawSerpParameterSchema>;
+}
+
+export interface RawSerpEngineInfo {
+  desc?: string;
+  icon?: string;
+  name?: string;
+  engine?: string;
+  format?: string[];
+  version?: string;
+  website?: string;
+  website_url?: string;
+  request_params?: RawSerpRequestSchema;
+}
+
+export interface RawSerpEngineInfoEnvelope {
+  code?: number;
+  msg?: string;
+  data?: RawSerpEngineInfo | null;
+}
+
+export interface SerpParameterDefinition {
+  name: string;
+  type: string;
+  required: boolean;
+  group: string;
+  description?: string;
+  defaultValue?: unknown;
+  enumValues?: unknown[];
+}
+
+export interface SerpEngineDefinition {
+  scraper: string;
+  name: string;
+  engine: string;
+  description?: string;
+  website?: string;
+  websiteUrl?: string;
+  formats: string[];
+  version?: string;
+  parameters: SerpParameterDefinition[];
+}
+
+export interface SerpRequest {
+  engine: string;
+  params: Record<string, unknown>;
+}
+
+export interface SerpResponse extends Record<string, unknown> {
+  search_metadata?: Record<string, unknown>;
+  search_parameters?: Record<string, unknown>;
+  total_credits_used?: number;
+}
+
 export interface MapRequest {
   url: string;
   maxDepth?: number;

@@ -1,7 +1,7 @@
 # XCrawl CLI
 
 XCrawl CLI is the official command-line interface for XCrawl.
-Use it to scrape pages, run search queries, map sites, and manage crawl jobs from your terminal.
+Use it to scrape pages, run search queries, inspect SERP engines, map sites, and manage crawl jobs from your terminal.
 
 ## Installation
 
@@ -38,6 +38,8 @@ Run core commands:
 ```bash
 xcrawl scrape https://example.com --format markdown
 xcrawl search "xcrawl cli" --limit 10
+xcrawl serp --list-engines
+xcrawl serp google_search 'q=xcrawl cli'
 xcrawl status
 xcrawl map https://example.com --limit 10
 xcrawl crawl https://example.com
@@ -86,6 +88,8 @@ xcrawl init [-y] [--browser | --api-key <key>]
 xcrawl login [--browser | --api-key <key>] [--json]
 xcrawl scrape <url...> [--format markdown|json|html|screenshot|text] [--output <path>] [--json]
 xcrawl search <query> [--limit <n>] [--json]
+xcrawl serp --list-engines
+xcrawl serp <engine> [key=value...] [--param <key=value>] [--describe] [--json]
 xcrawl map <url> [--limit <n>] [--json]
 xcrawl crawl <url> [--wait]
 xcrawl crawl status <job-id>
@@ -99,6 +103,14 @@ xcrawl scrape --input ./urls.txt --concurrency 3 --json
 ```
 
 `urls.txt` should contain one URL per line. Lines starting with `#` are ignored.
+
+SERP examples:
+
+```bash
+xcrawl serp --list-engines
+xcrawl serp bing_shopping --describe
+xcrawl serp google_search 'q=xcrawl cli' --param page=2 --param no_cache=true --json
+```
 
 ## Configuration
 

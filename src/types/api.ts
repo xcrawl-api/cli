@@ -59,11 +59,53 @@ export interface ScrapeRequest {
   proxy?: string;
 }
 
+export interface BatchScrapeRequest {
+  urls: string[];
+  format?: OutputFormat;
+  timeoutMs?: number;
+  headers?: Record<string, string>;
+  cookies?: string;
+  proxy?: string;
+  maxConcurrency?: number;
+}
+
 export interface ScrapeResponse {
   url: string;
   format: OutputFormat;
   content: string;
   metadata?: Record<string, unknown>;
+}
+
+export type BatchScrapeJobStatus = 'pending' | 'running' | 'completed' | 'failed';
+
+export interface BatchScrapeStartResponse {
+  jobId: string;
+  status: BatchScrapeJobStatus;
+}
+
+export interface BatchScrapeResultReference {
+  url: string;
+  status: string;
+  resultRef?: string;
+  scrapeId?: string;
+}
+
+export interface BatchScrapeStatusResponse {
+  jobId: string;
+  status: BatchScrapeJobStatus;
+  totalUrls: number;
+  completedUrls: number;
+  failedUrls: number;
+  invalidUrls: string[];
+  results: BatchScrapeResultReference[];
+  startedAt?: string;
+  finishedAt?: string;
+  totalCreditsUsed?: number;
+}
+
+export interface BatchScrapeExecutionResponse {
+  job: BatchScrapeStatusResponse;
+  results: ScrapeResponse[];
 }
 
 export interface RawScrapeResponse {
@@ -80,6 +122,37 @@ export interface RawScrapeResponse {
     screenshot?: string;
     json?: unknown;
     metadata?: Record<string, unknown>;
+  };
+  started_at?: string;
+  ended_at?: string;
+  total_credits_used?: number;
+}
+
+export interface RawBatchScrapeResultReference {
+  url?: string;
+  status?: string;
+  data?: {
+    result_ref?: string;
+    scrape_id?: string;
+    status?: string;
+    url?: string;
+  };
+}
+
+export interface RawBatchScrapeResponse {
+  batch_scrape_id?: string;
+  endpoint?: string;
+  version?: string;
+  status?: string;
+  total_urls?: number;
+  completed_urls?: number;
+  failed_urls?: number;
+  invalid_urls?: string[];
+  data?: {
+    results?: RawBatchScrapeResultReference[];
+    offset?: number;
+    limit?: number;
+    has_more?: boolean;
   };
   started_at?: string;
   ended_at?: string;

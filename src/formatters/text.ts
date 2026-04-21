@@ -4,6 +4,7 @@ import { formatAuthGettingStarted } from '../core/auth';
 import { toStableJson } from './json';
 import { renderTable } from './table';
 import type {
+  BatchScrapeStatusResponse,
   CrawlStartResponse,
   CrawlStatusResponse,
   LlmModelDefinition,
@@ -58,6 +59,18 @@ export function formatStatus(data: StatusOutput, options?: { color?: boolean }):
 export function formatScrape(data: ScrapeResponse): string {
   const metadata = data.metadata ? `\nMetadata: ${JSON.stringify(data.metadata)}` : '';
   return `URL: ${data.url}\nFormat: ${data.format}\n\n${data.content}${metadata}`;
+}
+
+export function formatBatchScrapeSummary(data: BatchScrapeStatusResponse): string {
+  return [
+    `Batch Scrape ID: ${data.jobId}`,
+    `Status: ${data.status}`,
+    `Total URLs: ${data.totalUrls}`,
+    `Completed URLs: ${data.completedUrls}`,
+    `Failed URLs: ${data.failedUrls}`,
+    `Invalid URLs: ${data.invalidUrls.length}`,
+    `Credits Used: ${data.totalCreditsUsed ?? 'N/A'}`
+  ].join('\n');
 }
 
 export function formatSearch(data: SearchResponse): string {

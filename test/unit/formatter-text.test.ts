@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  formatBatchScrapeSummary,
   formatLlmModelDefinition,
   formatLlmResponse,
   formatLogoutResult,
@@ -39,6 +40,26 @@ describe('formatStatus', () => {
     expect(output).not.toContain('Email:');
     expect(output).not.toContain('Created At:');
     expect(output).toContain('Remaining Credits: 6500');
+  });
+});
+
+describe('formatBatchScrapeSummary', () => {
+  it('renders batch scrape job metrics', () => {
+    const output = formatBatchScrapeSummary({
+      jobId: 'batch_123',
+      status: 'completed',
+      totalUrls: 2,
+      completedUrls: 2,
+      failedUrls: 0,
+      invalidUrls: [],
+      results: [],
+      totalCreditsUsed: 2
+    });
+
+    expect(output).toContain('Batch Scrape ID: batch_123');
+    expect(output).toContain('Status: completed');
+    expect(output).toContain('Total URLs: 2');
+    expect(output).toContain('Credits Used: 2');
   });
 });
 

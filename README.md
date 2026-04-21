@@ -90,7 +90,7 @@ Tip: You can also set XCRAWL_API_KEY environment variable
 ```bash
 xcrawl init [-y] [--browser | --api-key <key>]
 xcrawl login [--browser | --api-key <key>] [--json]
-xcrawl scrape <url...> [--format markdown|json|html|screenshot|text] [--output <path>] [--json]
+xcrawl scrape <url...> [--format markdown|json|html|screenshot|text] [--output <path>] [--json] [--input <path>] [--concurrency <n>] [--interval <ms>] [--wait-timeout <ms>]
 xcrawl llm --list-models
 xcrawl llm <model> [key=value...] [--param <key=value>] [--describe] [--json]
 xcrawl search <query> [--limit <n>] [--json]
@@ -107,10 +107,12 @@ xcrawl status [--json]
 Batch scrape example:
 
 ```bash
-xcrawl scrape --input ./urls.txt --concurrency 3 --json
+xcrawl scrape --input ./urls.txt --concurrency 3 --wait-timeout 120000 --json
 ```
 
 `urls.txt` should contain one URL per line. Lines starting with `#` are ignored.
+When multiple URLs are provided, XCrawl CLI creates a batch scrape job, waits for completion, and then fetches each referenced scrape result.
+In default text mode, batch scraping prints a short job summary before file output paths.
 
 LLM examples:
 
@@ -170,6 +172,7 @@ Environment variables:
 ## API Routing Notes
 
 - Default API base URL is `https://run.xcrawl.com`.
+- Multi-URL `scrape` uses `POST /v1/batch/scrape`, polls `GET /v1/batch/scrape/{batch_scrape_id}`, and fetches completed results from `GET /v1/scrape/{scrape_id}`.
 - `llm` executes against `https://run.xcrawl.com/v1/llm` and loads metadata from `https://api.xcrawl.com/web_v1/scraping/xcrawl*`.
 - `scraper` executes against `https://run.xcrawl.com/v1/data` and loads metadata from `https://api.xcrawl.com/web_v1/scraping/xcrawl*`.
 - `status` always calls `https://api.xcrawl.com/web_v1/user/credit-user-info`.

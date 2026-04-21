@@ -12,6 +12,7 @@ import { readLocalConfig, resolveRuntimeConfig } from './core/config';
 import { registerConfigCommand } from './commands/config';
 import { registerCrawlCommand } from './commands/crawl';
 import { registerInitCommand } from './commands/init';
+import { registerLlmCommand } from './commands/llm';
 import { registerLoginCommand } from './commands/login';
 import { registerLogoutCommand } from './commands/logout';
 import { registerMapCommand } from './commands/map';
@@ -29,6 +30,7 @@ const KNOWN_COMMANDS = new Set([
   'login',
   'logout',
   'status',
+  'llm',
   'scrape',
   'search',
   'serp',
@@ -144,6 +146,7 @@ export function createProgram(context: CliContext): Command {
   registerLoginCommand(program, context);
   registerLogoutCommand(program, context);
   registerStatusCommand(program, context);
+  registerLlmCommand(program, context);
   registerScrapeCommand(program, context);
   registerSearchCommand(program, context);
   registerSerpCommand(program, context);

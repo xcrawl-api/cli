@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  formatLlmModelDefinition,
+  formatLlmResponse,
   formatLogoutResult,
   formatScraperDefinition,
   formatScraperResponse,
@@ -152,5 +154,53 @@ describe('formatScraperResponse', () => {
     expect(output).toContain('Result items: 1');
     expect(output).toContain('Top-level fields: data, status');
     expect(output).toContain('"results"');
+  });
+});
+
+describe('formatLlmModelDefinition', () => {
+  it('renders llm model metadata and parameter summaries', () => {
+    const output = formatLlmModelDefinition({
+      scraper: 'chatgpt_model',
+      name: 'ChatGPT Web Search',
+      engine: 'chatgpt_web_search',
+      website: 'OpenAI',
+      websiteUrl: 'https://chatgpt.com',
+      formats: ['json'],
+      version: '1.0.0',
+      description: 'Browse with ChatGPT.',
+      parameters: [
+        {
+          name: 'prompt',
+          type: 'string',
+          required: true,
+          group: 'Search Prompt',
+          description: 'The user query.'
+        }
+      ]
+    });
+
+    expect(output).toContain('Model: chatgpt_model');
+    expect(output).toContain('Description: Browse with ChatGPT.');
+    expect(output).toContain('prompt [string] required / Search Prompt');
+  });
+});
+
+describe('formatLlmResponse', () => {
+  it('renders markdown output before falling back to raw json', () => {
+    const output = formatLlmResponse({
+      llm_id: 'llm_123',
+      status: 'completed',
+      engine: 'chatgpt_model',
+      prompt: 'What is XCrawl CLI?',
+      total_credits_used: 1,
+      data: {
+        markdown: 'XCrawl CLI is a command-line tool.'
+      }
+    });
+
+    expect(output).toContain('Status: completed');
+    expect(output).toContain('LLM ID: llm_123');
+    expect(output).toContain('Prompt: What is XCrawl CLI?');
+    expect(output).toContain('XCrawl CLI is a command-line tool.');
   });
 });

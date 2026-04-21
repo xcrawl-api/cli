@@ -6,6 +6,9 @@ import { renderTable } from './table';
 import type {
   CrawlStartResponse,
   CrawlStatusResponse,
+  LlmModelDefinition,
+  LlmModelSummary,
+  LlmResponse,
   MapResponse,
   ScraperDefinition,
   ScraperResponse,
@@ -232,6 +235,67 @@ export function formatScraperResponse(data: ScraperResponse): string {
     '',
     toStableJson(data).trimEnd()
   ].join('\n');
+}
+
+export function formatLlmModelList(data: LlmModelSummary[]): string {
+  if (data.length === 0) {
+    return 'No LLM models available.';
+  }
+
+  return [
+    `Supported LLM models: ${data.length}`,
+    '',
+    renderTable(data, [
+      { key: 'name', title: 'Name' },
+      { key: 'scraper', title: 'Model' },
+      { key: 'website', title: 'Website' }
+    ]),
+    '',
+    'Inspect one model with: xcrawl llm <model> --describe'
+  ].join('\n');
+}
+
+export function formatLlmModelDefinition(data: LlmModelDefinition): string {
+  const parameterLines =
+    data.parameters.length === 0
+      ? ['No parameters available.']
+      : data.parameters.map((parameter) => {
+          const requirement = parameter.required ? 'required' : 'optional';
+          const description = parameter.description ? ` - ${parameter.description}` : '';
+          return `${parameter.name} [${parameter.type}] ${requirement} / ${parameter.group}${description}`;
+        });
+
+  return [
+    `Name: ${data.name}`,
+    `Model: ${data.scraper}`,
+    `Engine: ${data.engine}`,
+    `Website: ${data.website ?? 'N/A'}`,
+    `Website URL: ${data.websiteUrl ?? 'N/A'}`,
+    `Formats: ${data.formats.length > 0 ? data.formats.join(', ') : 'N/A'}`,
+    `Version: ${data.version ?? 'N/A'}`,
+    data.description ? `Description: ${data.description}` : undefined,
+    '',
+    'Parameters:',
+    ...parameterLines
+  ]
+    .filter((line): line is string => Boolean(line))
+    .join('\n');
+}
+
+export function formatLlmResponse(data: LlmResponse): string {
+  const markdown = typeof data.data?.markdown === 'string' ? data.data.markdown.trim() : '';
+
+  return [
+    `Status: ${data.status ?? 'N/A'}`,
+    `LLM ID: ${data.llm_id ?? 'N/A'}`,
+    `Engine: ${data.engine ?? 'N/A'}`,
+    `Credits Used: ${data.total_credits_used ?? 'N/A'}`,
+    data.prompt ? `Prompt: ${data.prompt}` : undefined,
+    '',
+    markdown.length > 0 ? markdown : toStableJson(data).trimEnd()
+  ]
+    .filter((line): line is string => Boolean(line))
+    .join('\n');
 }
 
 export function formatCrawlStart(data: CrawlStartResponse): string {

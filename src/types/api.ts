@@ -299,6 +299,84 @@ export interface ScraperResponse extends Record<string, unknown> {
   total_credits_used?: number;
 }
 
+export interface LlmModelSummary {
+  scraper: string;
+  name: string;
+  website: string;
+  domain?: string;
+  description?: string;
+}
+
+export interface RawLlmModelSummary {
+  scraper?: string;
+  website?: string;
+  domain?: string;
+  name?: string;
+  desc?: string;
+}
+
+export interface RawLlmModelListEnvelope {
+  code?: number;
+  msg?: string;
+  data?: {
+    list?: RawLlmModelSummary[];
+  } | null;
+}
+
+export interface RawLlmModelInfo {
+  desc?: string;
+  icon?: string;
+  name?: string;
+  engine?: string;
+  format?: string[];
+  version?: string;
+  website?: string;
+  website_url?: string;
+  request_params?: RawSerpRequestSchema;
+}
+
+export interface RawLlmModelInfoEnvelope {
+  code?: number;
+  msg?: string;
+  data?: RawLlmModelInfo | null;
+}
+
+export interface LlmModelDefinition {
+  scraper: string;
+  name: string;
+  engine: string;
+  description?: string;
+  website?: string;
+  websiteUrl?: string;
+  formats: string[];
+  version?: string;
+  parameters: SerpParameterDefinition[];
+}
+
+export interface LlmRequest {
+  engine: string;
+  params: Record<string, unknown>;
+}
+
+export interface LlmResponseData {
+  markdown?: string;
+  raw_html?: string;
+  [key: string]: unknown;
+}
+
+export interface LlmResponse extends Record<string, unknown> {
+  llm_id?: string;
+  endpoint?: string;
+  version?: string;
+  status?: string;
+  engine?: string;
+  prompt?: string;
+  data?: LlmResponseData;
+  started_at?: string;
+  ended_at?: string;
+  total_credits_used?: number;
+}
+
 export interface MapRequest {
   url: string;
   maxDepth?: number;

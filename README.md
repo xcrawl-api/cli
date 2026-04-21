@@ -1,7 +1,7 @@
 # XCrawl CLI
 
 XCrawl CLI is the official command-line interface for XCrawl.
-Use it to scrape pages, run search queries, inspect SERP engines and web scrapers, map sites, and manage crawl jobs from your terminal.
+Use it to scrape pages, run search queries, inspect SERP engines, web scrapers, and LLM models, map sites, and manage crawl jobs from your terminal.
 
 ## Installation
 
@@ -37,6 +37,8 @@ Run core commands:
 
 ```bash
 xcrawl scrape https://example.com --format markdown
+xcrawl llm --list-models
+xcrawl llm chatgpt_model 'prompt=What is XCrawl CLI?' --param location=US
 xcrawl search "xcrawl cli" --limit 10
 xcrawl serp --list-engines
 xcrawl serp google_search 'q=xcrawl cli'
@@ -89,6 +91,8 @@ Tip: You can also set XCRAWL_API_KEY environment variable
 xcrawl init [-y] [--browser | --api-key <key>]
 xcrawl login [--browser | --api-key <key>] [--json]
 xcrawl scrape <url...> [--format markdown|json|html|screenshot|text] [--output <path>] [--json]
+xcrawl llm --list-models
+xcrawl llm <model> [key=value...] [--param <key=value>] [--describe] [--json]
 xcrawl search <query> [--limit <n>] [--json]
 xcrawl serp --list-engines
 xcrawl serp <engine> [key=value...] [--param <key=value>] [--describe] [--json]
@@ -107,6 +111,14 @@ xcrawl scrape --input ./urls.txt --concurrency 3 --json
 ```
 
 `urls.txt` should contain one URL per line. Lines starting with `#` are ignored.
+
+LLM examples:
+
+```bash
+xcrawl llm --list-models
+xcrawl llm chatgpt_model --describe
+xcrawl llm chatgpt_model 'prompt=What is XCrawl CLI?' --param location=US --json
+```
 
 SERP examples:
 
@@ -158,6 +170,7 @@ Environment variables:
 ## API Routing Notes
 
 - Default API base URL is `https://run.xcrawl.com`.
+- `llm` executes against `https://run.xcrawl.com/v1/llm` and loads metadata from `https://api.xcrawl.com/web_v1/scraping/xcrawl*`.
 - `scraper` executes against `https://run.xcrawl.com/v1/data` and loads metadata from `https://api.xcrawl.com/web_v1/scraping/xcrawl*`.
 - `status` always calls `https://api.xcrawl.com/web_v1/user/credit-user-info`.
 - `status` authentication is sent as query param: `app_key=<your_api_key>`.

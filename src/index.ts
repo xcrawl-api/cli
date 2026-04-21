@@ -15,6 +15,7 @@ import { registerInitCommand } from './commands/init';
 import { registerLoginCommand } from './commands/login';
 import { registerLogoutCommand } from './commands/logout';
 import { registerMapCommand } from './commands/map';
+import { registerScraperCommand } from './commands/scraper';
 import { registerSerpCommand } from './commands/serp';
 import { registerScrapeCommand } from './commands/scrape';
 import { registerSearchCommand } from './commands/search';
@@ -31,6 +32,7 @@ const KNOWN_COMMANDS = new Set([
   'scrape',
   'search',
   'serp',
+  'scraper',
   'map',
   'crawl',
   'config',
@@ -145,6 +147,7 @@ export function createProgram(context: CliContext): Command {
   registerScrapeCommand(program, context);
   registerSearchCommand(program, context);
   registerSerpCommand(program, context);
+  registerScraperCommand(program, context);
 
   registerMapCommand(program, context);
   registerCrawlCommand(program, context);

@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import {
   formatLogoutResult,
+  formatScraperDefinition,
+  formatScraperResponse,
   formatSerpEngineDefinition,
   formatSerpResponse,
   formatStatus
@@ -85,5 +87,70 @@ describe('formatSerpResponse', () => {
     expect(output).toContain('Search ID: serp_123');
     expect(output).toContain('Sections: organic_results (1)');
     expect(output).toContain('"organic_results"');
+  });
+});
+
+describe('formatScraperDefinition', () => {
+  it('renders scraper metadata, parameter summaries, and response fields', () => {
+    const output = formatScraperDefinition({
+      scraper: 'reddit_user_posts',
+      name: 'Reddit User Posts',
+      engine: 'reddit_user_posts',
+      website: 'Reddit',
+      websiteUrl: 'reddit.com',
+      formats: ['json'],
+      version: '1.0.0',
+      description: 'Load Reddit post details.',
+      parameters: [
+        {
+          name: 'url_list',
+          type: 'array',
+          required: true,
+          group: 'Input',
+          description: 'A list of Reddit post URLs.'
+        }
+      ],
+      responseFields: [
+        {
+          path: 'result[].results_list[].title',
+          type: 'string',
+          description: 'Article title.'
+        }
+      ]
+    });
+
+    expect(output).toContain('Scraper: reddit_user_posts');
+    expect(output).toContain('url_list [array] required / Input');
+    expect(output).toContain('Response Fields:');
+    expect(output).toContain('result[].results_list[].title [string]');
+  });
+});
+
+describe('formatScraperResponse', () => {
+  it('renders a summary header before the JSON payload', () => {
+    const output = formatScraperResponse({
+      result: [{ content: { title: 'XCrawl' } }]
+    });
+
+    expect(output).toContain('Result items: 1');
+    expect(output).toContain('Top-level fields: result');
+    expect(output).toContain('"result"');
+  });
+
+  it('counts nested data api results from the real response shape', () => {
+    const output = formatScraperResponse({
+      data: {
+        data: {
+          result: {
+            results: [{ content: { title: 'XCrawl' } }]
+          }
+        }
+      },
+      status: 'completed'
+    });
+
+    expect(output).toContain('Result items: 1');
+    expect(output).toContain('Top-level fields: data, status');
+    expect(output).toContain('"results"');
   });
 });

@@ -1,7 +1,7 @@
 # XCrawl CLI
 
 XCrawl CLI is the official command-line interface for XCrawl.
-Use it to scrape pages, run search queries, inspect SERP engines, map sites, and manage crawl jobs from your terminal.
+Use it to scrape pages, run search queries, inspect SERP engines and web scrapers, map sites, and manage crawl jobs from your terminal.
 
 ## Installation
 
@@ -40,6 +40,8 @@ xcrawl scrape https://example.com --format markdown
 xcrawl search "xcrawl cli" --limit 10
 xcrawl serp --list-engines
 xcrawl serp google_search 'q=xcrawl cli'
+xcrawl scraper --list-scrapers
+xcrawl scraper reddit_user_posts 'url_list=["https://www.reddit.com/r/test/comments/abc"]'
 xcrawl status
 xcrawl map https://example.com --limit 10
 xcrawl crawl https://example.com
@@ -90,6 +92,8 @@ xcrawl scrape <url...> [--format markdown|json|html|screenshot|text] [--output <
 xcrawl search <query> [--limit <n>] [--json]
 xcrawl serp --list-engines
 xcrawl serp <engine> [key=value...] [--param <key=value>] [--describe] [--json]
+xcrawl scraper --list-scrapers
+xcrawl scraper <scraper> [key=value...] [--param <key=value>] [--describe] [--json]
 xcrawl map <url> [--limit <n>] [--json]
 xcrawl crawl <url> [--wait]
 xcrawl crawl status <job-id>
@@ -110,6 +114,14 @@ SERP examples:
 xcrawl serp --list-engines
 xcrawl serp bing_shopping --describe
 xcrawl serp google_search 'q=xcrawl cli' --param page=2 --param no_cache=true --json
+```
+
+Web scraper examples:
+
+```bash
+xcrawl scraper --list-scrapers
+xcrawl scraper reddit_user_posts --describe
+xcrawl scraper reddit_user_posts 'url_list=["https://www.reddit.com/r/test/comments/abc"]' --json
 ```
 
 ## Configuration
@@ -146,5 +158,6 @@ Environment variables:
 ## API Routing Notes
 
 - Default API base URL is `https://run.xcrawl.com`.
+- `scraper` executes against `https://run.xcrawl.com/v1/data` and loads metadata from `https://api.xcrawl.com/web_v1/scraping/xcrawl*`.
 - `status` always calls `https://api.xcrawl.com/web_v1/user/credit-user-info`.
 - `status` authentication is sent as query param: `app_key=<your_api_key>`.

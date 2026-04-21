@@ -1,11 +1,11 @@
-import type { SerpEngineDefinition } from '../types/api';
+import type { ScraperDefinition } from '../types/api';
 import { mergeSchemaParamEntries, parseSchemaParams } from './schema-params';
 
-export function mergeSerpParamEntries(positionalEntries: string[], optionEntries: string[] = []): string[] {
+export function mergeScraperParamEntries(positionalEntries: string[], optionEntries: string[] = []): string[] {
   return mergeSchemaParamEntries(positionalEntries, optionEntries);
 }
 
-export function parseSerpParams(entries: string[], definition: SerpEngineDefinition): Record<string, unknown> {
+export function parseScraperParams(entries: string[], definition: ScraperDefinition): Record<string, unknown> {
   return parseSchemaParams(
     entries,
     {
@@ -13,18 +13,18 @@ export function parseSerpParams(entries: string[], definition: SerpEngineDefinit
       parameters: definition.parameters
     },
     {
-    invalidEntry: 'Use key=value, for example `q=xcrawl` or `--param page=2`.',
+    invalidEntry: 'Use key=value, for example `query=xcrawl` or `--param page=2`.',
     unsupportedParameter: (name, definitionId) => ({
-      message: `Unsupported SERP parameter: ${name}.`,
-      hint: `Run \`xcrawl serp ${definitionId} --describe\` to inspect supported parameters.`
+      message: `Unsupported scraper parameter: ${name}.`,
+      hint: `Run \`xcrawl scraper ${definitionId} --describe\` to inspect supported parameters.`
     }),
     duplicateParameter: (name) => ({
-      message: `Duplicate SERP parameter: ${name}.`,
-      hint: 'Pass each SERP parameter only once.'
+      message: `Duplicate scraper parameter: ${name}.`,
+      hint: 'Pass each scraper parameter only once.'
     }),
     missingRequired: (names, definitionId) => ({
-      message: `Missing required SERP parameter: ${names.join(', ')}.`,
-      hint: `Run \`xcrawl serp ${definitionId} --describe\` to inspect required parameters.`
+      message: `Missing required scraper parameter: ${names.join(', ')}.`,
+      hint: `Run \`xcrawl scraper ${definitionId} --describe\` to inspect required parameters.`
     }),
     invalidBoolean: (name) => ({
       message: `${name} must be a boolean.`,
@@ -47,7 +47,7 @@ export function parseSerpParams(entries: string[], definition: SerpEngineDefinit
       hint:
         examples.length > 0
           ? `Examples for ${name}: ${examples.join(', ')}.`
-          : 'Inspect the engine metadata with `xcrawl serp <engine> --describe`.'
+          : 'Inspect the scraper metadata with `xcrawl scraper <scraper> --describe`.'
     })
     }
   );

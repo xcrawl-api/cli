@@ -218,6 +218,87 @@ export interface SerpResponse extends Record<string, unknown> {
   total_credits_used?: number;
 }
 
+export interface RawScraperResponseField {
+  name?: string;
+  type?: string;
+  desc?: string;
+  sub?: RawScraperResponseField[];
+}
+
+export interface ScraperResponseField {
+  path: string;
+  type: string;
+  description?: string;
+}
+
+export interface ScraperSummary {
+  scraper: string;
+  name: string;
+  website: string;
+  domain?: string;
+  description?: string;
+}
+
+export interface RawScraperSummary {
+  scraper?: string;
+  website?: string;
+  domain?: string;
+  name?: string;
+  desc?: string;
+}
+
+export interface RawScraperListEnvelope {
+  code?: number;
+  msg?: string;
+  data?: {
+    list?: RawScraperSummary[];
+  } | null;
+}
+
+export interface RawScraperInfo {
+  desc?: string;
+  icon?: string;
+  name?: string;
+  engine?: string;
+  format?: string[];
+  version?: string;
+  website?: string;
+  website_url?: string;
+  request_params?: RawSerpRequestSchema;
+  response_dict?: RawScraperResponseField[];
+  response_example?: unknown;
+}
+
+export interface RawScraperInfoEnvelope {
+  code?: number;
+  msg?: string;
+  data?: RawScraperInfo | null;
+}
+
+export interface ScraperDefinition {
+  scraper: string;
+  name: string;
+  engine: string;
+  description?: string;
+  website?: string;
+  websiteUrl?: string;
+  formats: string[];
+  version?: string;
+  parameters: SerpParameterDefinition[];
+  responseFields: ScraperResponseField[];
+  responseExample?: unknown;
+}
+
+export interface ScraperRequest {
+  engine: string;
+  params: Record<string, unknown>;
+}
+
+export interface ScraperResponse extends Record<string, unknown> {
+  result?: unknown[];
+  total_credits_used?: number;
+}
+
 export interface MapRequest {
   url: string;
   maxDepth?: number;

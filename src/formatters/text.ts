@@ -7,6 +7,9 @@ import type {
   CrawlStartResponse,
   CrawlStatusResponse,
   MapResponse,
+  ScraperDefinition,
+  ScraperResponse,
+  ScraperSummary,
   SerpEngineDefinition,
   SerpEngineSummary,
   SerpResponse,
@@ -151,6 +154,86 @@ export function formatSerpResponse(data: SerpResponse): string {
   return lines.join('\n');
 }
 
+export function formatScraperList(data: ScraperSummary[]): string {
+  if (data.length === 0) {
+    return 'No web scrapers available.';
+  }
+
+  return [
+    `Supported web scrapers: ${data.length}`,
+    '',
+    renderTable(data, [
+      { key: 'name', title: 'Name' },
+      { key: 'scraper', title: 'Scraper' },
+      { key: 'website', title: 'Website' }
+    ]),
+    '',
+    'Inspect one scraper with: xcrawl scraper <scraper> --describe'
+  ].join('\n');
+}
+
+export function formatScraperDefinition(data: ScraperDefinition): string {
+  const parameterLines =
+    data.parameters.length === 0
+      ? ['No parameters available.']
+      : data.parameters.map((parameter) => {
+          const requirement = parameter.required ? 'required' : 'optional';
+          const description = parameter.description ? ` - ${parameter.description}` : '';
+          return `${parameter.name} [${parameter.type}] ${requirement} / ${parameter.group}${description}`;
+        });
+
+  const responseFieldLines =
+    data.responseFields.length === 0
+      ? ['No response fields documented.']
+      : data.responseFields.map((field) => {
+          const description = field.description ? ` - ${field.description}` : '';
+          return `${field.path} [${field.type}]${description}`;
+        });
+
+  return [
+    `Name: ${data.name}`,
+    `Scraper: ${data.scraper}`,
+    `Engine: ${data.engine}`,
+    `Website: ${data.website ?? 'N/A'}`,
+    `Website URL: ${data.websiteUrl ?? 'N/A'}`,
+    `Formats: ${data.formats.length > 0 ? data.formats.join(', ') : 'N/A'}`,
+    `Version: ${data.version ?? 'N/A'}`,
+    data.description ? `Description: ${data.description}` : undefined,
+    '',
+    'Parameters:',
+    ...parameterLines,
+    '',
+    'Response Fields:',
+    ...responseFieldLines
+  ]
+    .filter((line): line is string => Boolean(line))
+    .join('\n');
+}
+
+export function formatScraperResponse(data: ScraperResponse): string {
+  const topLevelKeys = Object.keys(data);
+  const resultCount = countScraperResultItems(data);
+  const sections = Object.entries(data).map(([key, value]) => {
+    if (Array.isArray(value)) {
+      return `${key} (${value.length})`;
+    }
+
+    if (value && typeof value === 'object') {
+      return key;
+    }
+
+    return `${key}: ${String(value)}`;
+  });
+
+  return [
+    `Result items: ${resultCount}`,
+    `Top-level fields: ${topLevelKeys.join(', ') || 'none'}`,
+    sections.length > 0 ? `Sections: ${sections.join(', ')}` : 'Sections: none',
+    '',
+    toStableJson(data).trimEnd()
+  ].join('\n');
+}
+
 export function formatCrawlStart(data: CrawlStartResponse): string {
   return [`Job ID: ${data.jobId}`, `URL: ${data.url}`, `Status: ${data.status}`].join('\n');
 }
@@ -177,4 +260,36 @@ export function formatConfigSet(key: string, value: unknown, configPath: string)
 
 function stringValue(value: unknown): string | undefined {
   return typeof value === 'string' && value.trim().length > 0 ? value : undefined;
+}
+
+function countScraperResultItems(data: ScraperResponse): number {
+  if (Array.isArray(data.result)) {
+    return data.result.length;
+  }
+
+  const nestedResults = getNestedArray(data, ['data', 'data', 'result', 'results']);
+  if (nestedResults) {
+    return nestedResults.length;
+  }
+
+  const directNestedResults = getNestedArray(data, ['result', 'results']);
+  if (directNestedResults) {
+    return directNestedResults.length;
+  }
+
+  return 0;
+}
+
+function getNestedArray(value: unknown, path: string[]): unknown[] | undefined {
+  let current: unknown = value;
+
+  for (const segment of path) {
+    if (!current || typeof current !== 'object' || Array.isArray(current)) {
+      return undefined;
+    }
+
+    current = (current as Record<string, unknown>)[segment];
+  }
+
+  return Array.isArray(current) ? current : undefined;
 }
